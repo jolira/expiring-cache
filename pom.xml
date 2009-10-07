@@ -12,16 +12,15 @@
   <version>1.0.0-SNAPSHOT</version>
   <name>expiring-cache</name>
   
-  <description>A cache that supports expiring entries by based on timestamps</description>
+  <description>A cache that supports expiring entries by based on a TTL.</description>
   
-  <url>http://maven.apache.org</url>
   <scm>
-    <connection>scm:svn:http://jolira-tools.googlecode.com/svn/jaxro/trunk</connection>
-    <developerConnection>scm:svn:https://jolira-tools.googlecode.com/svn/jaxro/trunk</developerConnection>
-    <url>http://jolira-tools.googlecode.com/svn/jaxro/trunk</url>
+    <connection>scm:svn:http://jolira-tools.googlecode.com/svn/expiring-cache/trunk</connection>
+    <developerConnection>scm:svn:https://jolira-tools.googlecode.com/svn/expiring-cache/trunk</developerConnection>
+    <url>http://jolira-tools.googlecode.com/svn/expiring-cache/trunk</url>
   </scm>
   
-  <url>http://code.google.com/p/jolira-tools/wiki/jaxro</url>
+  <url>http://code.google.com/p/jolira-tools/wiki/expiringcache</url>
 
   <developers>
     <developer>
@@ -40,3 +39,4 @@
     </dependency>
   </dependencies>
 </project>
+
