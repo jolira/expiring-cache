@@ -8,15 +8,15 @@
   <groupId>com.google.code.joliratools</groupId>
   <artifactId>expiring-cache</artifactId>
   <packaging>jar</packaging>
-  <version>1.0.0</version>
+  <version>1.0.0-SNAPSHOT</version>
   <name>expiring-cache</name>
   
   <description>A cache that supports expiring entries by based on a TTL.</description>
   
   <scm>
-    <connection>scm:svn:http://jolira-tools.googlecode.com/svn/expiring-cache/tags/expiring-cache-1.0.0</connection>
-    <developerConnection>scm:svn:https://jolira-tools.googlecode.com/svn/expiring-cache/tags/expiring-cache-1.0.0</developerConnection>
-    <url>http://jolira-tools.googlecode.com/svn/expiring-cache/tags/expiring-cache-1.0.0</url>
+    <connection>scm:svn:http://jolira-tools.googlecode.com/svn/expiring-cache/trunk/expiring-cache</connection>
+    <developerConnection>scm:svn:https://jolira-tools.googlecode.com/svn/expiring-cache/trunk/expiring-cache</developerConnection>
+    <url>http://jolira-tools.googlecode.com/svn/expiring-cache/trunk/expiring-cache</url>
   </scm>
   
   <url>http://jolira-tools.googlecode.com/svn/expiring-cache/trunk</url>
