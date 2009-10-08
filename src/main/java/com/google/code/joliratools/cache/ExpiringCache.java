@@ -1,5 +1,6 @@
 package com.google.code.joliratools.cache;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -19,7 +20,9 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * @param <V>
  * @see Map
  */
-public final class ExpiringCache<K, V> implements Map<K, V> {
+public final class ExpiringCache<K, V> implements Map<K, V>, Serializable {
+    private static final long serialVersionUID = -417862913992399059L;
+
     private final ReadWriteLock lock = new ReentrantReadWriteLock();
     private final Map<K, CacheEntry<V>> m = new LinkedHashMap<K, CacheEntry<V>>();
     private final int ttl;
