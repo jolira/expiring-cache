@@ -5,11 +5,11 @@ package com.google.code.joliratools.cache;
 
 import java.lang.ref.SoftReference;
 
-class ValueWrapper<V> {
+class CacheEntry<V> {
     final SoftReference<V> ref;
     final long expiration;
 
-    ValueWrapper(final V value, final long expiration) {
+    CacheEntry(final V value, final long expiration) {
         ref = new SoftReference<V>(value);
         this.expiration = expiration;
     }

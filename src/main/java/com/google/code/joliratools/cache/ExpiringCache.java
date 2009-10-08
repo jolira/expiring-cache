@@ -21,7 +21,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  */
 public final class ExpiringCache<K, V> implements Map<K, V> {
     private final ReadWriteLock lock = new ReentrantReadWriteLock();
-    private final Map<K, ValueWrapper<V>> m = new LinkedHashMap<K, ValueWrapper<V>>();
+    private final Map<K, CacheEntry<V>> m = new LinkedHashMap<K, CacheEntry<V>>();
     private final int ttl;
 
     public ExpiringCache(final int ttl) {
@@ -34,22 +34,22 @@ public final class ExpiringCache<K, V> implements Map<K, V> {
     }
 
     private void cleanup(final long current) {
-        final Collection<Entry<K, ValueWrapper<V>>> entries = m.entrySet();
-        final Iterator<Entry<K, ValueWrapper<V>>> it = entries.iterator();
+        final Collection<Entry<K, CacheEntry<V>>> entries = m.entrySet();
+        final Iterator<Entry<K, CacheEntry<V>>> it = entries.iterator();
 
         if (!it.hasNext()) {
             return;
         }
 
-        final Entry<K, ValueWrapper<V>> entry = it.next();
-        final ValueWrapper<V> wrapper = entry.getValue();
+        final Entry<K, CacheEntry<V>> entry = it.next();
+        final CacheEntry<V> wrapper = entry.getValue();
 
         if (!wrapper.hasExpired(current)) {
             return;
         }
 
         final K key = entry.getKey();
-        final ValueWrapper<V> removed = m.remove(key);
+        final CacheEntry<V> removed = m.remove(key);
 
         assert removed == wrapper;
 
@@ -120,7 +120,7 @@ public final class ExpiringCache<K, V> implements Map<K, V> {
         l.lock();
 
         try {
-            final ValueWrapper<V> ref = m.get(key);
+            final CacheEntry<V> ref = m.get(key);
             final long current = System.currentTimeMillis();
 
             if (ref == null || ref.hasExpired(current)) {
@@ -167,9 +167,9 @@ public final class ExpiringCache<K, V> implements Map<K, V> {
 
             cleanup(current);
 
-            final ValueWrapper<V> wrapper = new ValueWrapper<V>(value, current
+            final CacheEntry<V> wrapper = new CacheEntry<V>(value, current
                     + ttl);
-            final ValueWrapper<V> overridden = m.put(key, wrapper);
+            final CacheEntry<V> overridden = m.put(key, wrapper);
 
             if (overridden == null) {
                 return null;
@@ -199,6 +199,56 @@ public final class ExpiringCache<K, V> implements Map<K, V> {
         }
     }
 
+    /**
+     * This put operation only put the value into the map if no other,
+     * non-expired value currently exists in the map. If this key is already in
+     * the map, the existing value is returned instead.
+     * 
+     * @param key
+     *            the key to be used
+     * @param value
+     *            the new value
+     * @return the new value, if there was no existing entry for this key;
+     *         otherwise the existing value.
+     */
+    public V putIfAbsent(final K key, final V value) {
+        final V existing = get(key);
+
+        if (existing != null) {
+            return existing;
+        }
+
+        final Lock l = lock.writeLock();
+
+        l.lock();
+
+        try {
+            final long current = System.currentTimeMillis();
+
+            cleanup(current);
+
+            final CacheEntry<V> _existing = m.get(key);
+
+            if (_existing != null) {
+                final V val = _existing.get();
+
+                if (val != null) {
+                    return val;
+                }
+            }
+
+            final CacheEntry<V> wrapper = new CacheEntry<V>(value, current
+                    + ttl);
+            final CacheEntry<V> overridden = m.put(key, wrapper);
+
+            assert overridden == _existing;
+
+            return value;
+        } finally {
+            l.unlock();
+        }
+    }
+
     @Override
     public V remove(final Object key) {
         final Lock l = lock.writeLock();
@@ -210,7 +260,7 @@ public final class ExpiringCache<K, V> implements Map<K, V> {
 
             cleanup(current);
 
-            final ValueWrapper<V> removed = m.remove(key);
+            final CacheEntry<V> removed = m.remove(key);
 
             if (removed == null || removed.hasExpired(current)) {
                 return null;

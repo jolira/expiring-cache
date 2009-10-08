@@ -1,3 +1,5 @@
+package com.google.code.joliratools.cache;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -7,13 +9,12 @@ import java.util.Map;
 
 import org.junit.Test;
 
-import com.google.code.joliratools.cache.ExpiringCache;
-
 public class ExpiringCacheTest {
     private static final int ONETHOUSAND = 1000;
 
-    private Map<Integer, String> loadOneThousand(final int ttl) {
-        final Map<Integer, String> map = new ExpiringCache<Integer, String>(ttl);
+    private ExpiringCache<Integer, String> loadOneThousand(final int ttl) {
+        final ExpiringCache<Integer, String> map = new ExpiringCache<Integer, String>(
+                ttl);
 
         for (int idx = 0; idx < ONETHOUSAND; idx++) {
             map.put(Integer.valueOf(idx), Integer.toHexString(idx));
@@ -97,6 +98,26 @@ public class ExpiringCacheTest {
         final Map<Integer, String> map2 = loadOneThousand(1);
 
         map2.putAll(map1);
+    }
+
+    @Test
+    public void testPutIfAbsent() {
+        final ExpiringCache<Integer, String> map = loadOneThousand(Integer.MAX_VALUE);
+
+        assertEquals(ONETHOUSAND, map.size());
+
+        final int fivehundred = ONETHOUSAND / 2;
+
+        for (int idx = fivehundred; idx < ONETHOUSAND + fivehundred; idx++) {
+            final String value = "jolira-" + Integer.toString(idx);
+            final String chosen = map.putIfAbsent(Integer.valueOf(idx), value);
+
+            if (idx < ONETHOUSAND) {
+                assertEquals(Integer.toHexString(idx), chosen);
+            } else {
+                assertEquals(value, chosen);
+            }
+        }
     }
 
     @Test
