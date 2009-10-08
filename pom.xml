@@ -30,6 +30,14 @@
     </developer>
   </developers>
 
+  <repositories>
+    <repository>  
+      <id>jolira-tools-repo</id>
+      <name>Jolira-Tools Maven Repository</name>
+      <url>http://jolira-tools.googlecode.com/svn/maven/repo</url>
+    </repository>  
+  </repositories>
+
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
