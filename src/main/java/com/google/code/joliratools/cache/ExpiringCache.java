@@ -22,21 +22,38 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  */
 public final class ExpiringCache<K, V> implements Map<K, V>, Serializable {
     private static final long serialVersionUID = -417862913992399059L;
+    private static final long FIFTEEN_MINUTES = 1000 * 60 * 15;
+    private static final int DEFAULT_MAX_SIZE = 16 * 1024;
 
     private final ReadWriteLock lock = new ReentrantReadWriteLock();
     private final Map<K, CacheEntry<V>> m = new LinkedHashMap<K, CacheEntry<V>>();
-    private final int ttl;
+    private final long ttl;
+    private final int maxSize;
 
-    public ExpiringCache(final int ttl) {
+    public ExpiringCache() {
+        this(FIFTEEN_MINUTES);
+    }
+
+    public ExpiringCache(final long ttl) {
+        this(ttl, DEFAULT_MAX_SIZE);
+    }
+
+    public ExpiringCache(final long ttl, final int maxSize) {
         if (ttl <= 0) {
             throw new IllegalArgumentException(
                     "time to live must be greater than 0");
         }
 
+        if (maxSize < 0) {
+            throw new IllegalArgumentException(
+                    "maximum size must be greater than or equal to 0");
+        }
+
         this.ttl = ttl;
+        this.maxSize = maxSize;
     }
 
-    private void cleanup(final long current) {
+    private void cleanup(final long current, final int offset) {
         final Collection<Entry<K, CacheEntry<V>>> entries = m.entrySet();
         final Iterator<Entry<K, CacheEntry<V>>> it = entries.iterator();
 
@@ -46,8 +63,10 @@ public final class ExpiringCache<K, V> implements Map<K, V>, Serializable {
 
         final Entry<K, CacheEntry<V>> entry = it.next();
         final CacheEntry<V> wrapper = entry.getValue();
+        final int futureSize = m.size() + offset;
 
-        if (!wrapper.hasExpired(current)) {
+        if ((maxSize <= 0 || futureSize < maxSize)
+                && !wrapper.hasExpired(current)) {
             return;
         }
 
@@ -56,7 +75,7 @@ public final class ExpiringCache<K, V> implements Map<K, V>, Serializable {
 
         assert removed == wrapper;
 
-        cleanup(current);
+        cleanup(current, offset);
     }
 
     @Override
@@ -168,7 +187,7 @@ public final class ExpiringCache<K, V> implements Map<K, V>, Serializable {
         try {
             final long current = System.currentTimeMillis();
 
-            cleanup(current);
+            cleanup(current, 1);
 
             final CacheEntry<V> wrapper = new CacheEntry<V>(value, current
                     + ttl);
@@ -226,10 +245,6 @@ public final class ExpiringCache<K, V> implements Map<K, V>, Serializable {
         l.lock();
 
         try {
-            final long current = System.currentTimeMillis();
-
-            cleanup(current);
-
             final CacheEntry<V> _existing = m.get(key);
 
             if (_existing != null) {
@@ -239,6 +254,10 @@ public final class ExpiringCache<K, V> implements Map<K, V>, Serializable {
                     return val;
                 }
             }
+
+            final long current = System.currentTimeMillis();
+
+            cleanup(current, 1);
 
             final CacheEntry<V> wrapper = new CacheEntry<V>(value, current
                     + ttl);
@@ -261,7 +280,7 @@ public final class ExpiringCache<K, V> implements Map<K, V>, Serializable {
         try {
             final long current = System.currentTimeMillis();
 
-            cleanup(current);
+            cleanup(current, -1);
 
             final CacheEntry<V> removed = m.remove(key);
 

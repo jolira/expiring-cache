@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.Map;
 
@@ -12,15 +13,33 @@ import org.junit.Test;
 public class ExpiringCacheTest {
     private static final int ONETHOUSAND = 1000;
 
-    private ExpiringCache<Integer, String> loadOneThousand(final int ttl) {
+    private ExpiringCache<Integer, String> loadOneThousand(final long ttl) {
+        return loadOneThousand(ttl, 5 * ONETHOUSAND);
+    }
+
+    private ExpiringCache<Integer, String> loadOneThousand(final long ttl,
+            final int maxSize) {
         final ExpiringCache<Integer, String> map = new ExpiringCache<Integer, String>(
-                ttl);
+                ttl, maxSize);
 
         for (int idx = 0; idx < ONETHOUSAND; idx++) {
             map.put(Integer.valueOf(idx), Integer.toHexString(idx));
         }
 
         return map;
+    }
+
+    @Test
+    public void testBoundedCacheSize() {
+        final int fivehundred = ONETHOUSAND / 2;
+        final Map<Integer, String> map = loadOneThousand(Integer.MAX_VALUE,
+                fivehundred);
+
+        final int size = map.size();
+
+        if (size > fivehundred) {
+            fail("exceeded bound!");
+        }
     }
 
     @Test
@@ -72,7 +91,12 @@ public class ExpiringCacheTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testInvalidArgument() {
+    public void testInvalidMaxSizeArgument() {
+        new ExpiringCache<Object, Object>(1, -1);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testInvalidTTLArgument() {
         new ExpiringCache<Object, Object>(-1);
     }
 
