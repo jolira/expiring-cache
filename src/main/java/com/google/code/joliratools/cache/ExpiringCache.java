@@ -255,19 +255,19 @@ public final class ExpiringCache<K, V> implements Map<K, V>, Serializable {
         l.lock();
 
         try {
+            final long current = System.currentTimeMillis();
+
+            cleanup(current, 1);
+
             final CacheEntry<V> _existing = m.get(key);
 
-            if (_existing != null) {
+            if (_existing != null && !_existing.hasExpired(current)) {
                 final V val = _existing.get();
 
                 if (val != null) {
                     return val;
                 }
             }
-
-            final long current = System.currentTimeMillis();
-
-            cleanup(current, 1);
 
             final CacheEntry<V> wrapper = new CacheEntry<V>(value, current
                     + ttl);

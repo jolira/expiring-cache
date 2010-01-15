@@ -3,6 +3,7 @@ package com.google.code.joliratools.cache;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -11,6 +12,7 @@ import java.util.Map;
 import org.junit.Test;
 
 public class ExpiringCacheTest {
+    private static final int SMALL_LATENCY = 250;
     private static final int ONETHOUSAND = 1000;
 
     private ExpiringCache<Integer, String> loadOneThousand(final long ttl) {
@@ -142,6 +144,27 @@ public class ExpiringCacheTest {
                 assertEquals(value, chosen);
             }
         }
+    }
+
+    @Test
+    public void testPutIfAbsentExpires() throws InterruptedException {
+        final ExpiringCache<String, Object> map = new ExpiringCache<String, Object>(
+                SMALL_LATENCY);
+
+        final Object o1 = new Object();
+        final Object o2 = new Object();
+
+        final Object r1 = map.putIfAbsent("foo", o1);
+        final Object r2 = map.putIfAbsent("foo", o2);
+
+        assertSame(o1, r1);
+        assertSame(o1, r2);
+
+        Thread.sleep(SMALL_LATENCY + 1);
+
+        final Object r3 = map.putIfAbsent("foo", o2);
+
+        assertSame(o2, r3);
     }
 
     @Test
