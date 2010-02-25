@@ -16,7 +16,7 @@ import java.lang.ref.SoftReference;
 class CacheEntry<V> implements Serializable {
     private static final long serialVersionUID = -4063049639315804932L;
 
-    final SoftReference<V> ref;
+    final transient SoftReference<V> ref;
     final long expiration;
 
     CacheEntry(final V value, final long expiration) {
@@ -25,6 +25,10 @@ class CacheEntry<V> implements Serializable {
     }
 
     V get() {
+        if (ref == null) {
+            return null;
+        }
+
         return ref.get();
     }
 
