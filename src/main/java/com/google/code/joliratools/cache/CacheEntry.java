@@ -17,7 +17,7 @@ class CacheEntry<V> implements Serializable {
     private static final long serialVersionUID = -4063049639315804932L;
 
     final transient SoftReference<V> ref;
-    final long expiration;
+    final transient long expiration;
 
     CacheEntry(final V value, final long expiration) {
         ref = new SoftReference<V>(value);
