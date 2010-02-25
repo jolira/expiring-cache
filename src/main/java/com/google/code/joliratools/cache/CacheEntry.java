@@ -10,11 +10,14 @@
  */
 package com.google.code.joliratools.cache;
 
+import java.io.Serializable;
 import java.lang.ref.SoftReference;
 
-class CacheEntry<V> {
-    final SoftReference<V> ref;
-    final long expiration;
+class CacheEntry<V> implements Serializable {
+    private static final long serialVersionUID = -4063049639315804932L;
+
+    final transient SoftReference<V> ref;
+    final transient long expiration;
 
     CacheEntry(final V value, final long expiration) {
         ref = new SoftReference<V>(value);
@@ -22,6 +25,10 @@ class CacheEntry<V> {
     }
 
     V get() {
+        if (ref == null) {
+            return null;
+        }
+
         return ref.get();
     }
 
