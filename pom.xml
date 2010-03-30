@@ -10,7 +10,7 @@
   <version>1.0.8-SNAPSHOT</version>
   <name>expiring-cache</name>
   
-  <description>A cache that supports expiring entries by based on a TTL.</description>
+  <description>A very simple cache that supports expiring entries by based on a TTL.</description>
   
   <scm>
     <connection>scm:svn:http://jolira-tools.googlecode.com/svn/expiring-cache/trunk</connection>
