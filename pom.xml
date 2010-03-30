@@ -20,14 +20,6 @@
   
   <url>http://jolira-tools.googlecode.com/svn/expiring-cache/trunk</url>
 
-  <developers>
-    <developer>
-      <id>jfk</id>
-      <name>Joachim Kainz</name>
-      <email>jfk@jolira.com</email>
-    </developer>
-  </developers>
-
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
