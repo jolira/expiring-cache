@@ -3,7 +3,7 @@
   <parent>
     <groupId>com.jolira</groupId>
     <artifactId>superpom</artifactId>
-    <version>1.0.5</version>
+    <version>1.0.6</version>
   </parent>
   <artifactId>expiring-cache</artifactId>
   <packaging>jar</packaging>
@@ -27,14 +27,6 @@
       <email>jfk@jolira.com</email>
     </developer>
   </developers>
-
-  <repositories>
-    <repository>  
-      <id>jolira-tools-repo</id>
-      <name>Jolira-Tools Maven Repository</name>
-      <url>http://jolira-tools.googlecode.com/svn/maven/repo</url>
-    </repository>  
-  </repositories>
 
   <dependencies>
     <dependency>
