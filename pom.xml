@@ -7,15 +7,15 @@
   </parent>
   <artifactId>expiring-cache</artifactId>
   <packaging>jar</packaging>
-  <version>1.0.14</version>
+  <version>1.0.15-SNAPSHOT</version>
   <name>expiring-cache</name>
   
   <description>A very simple cache that supports expiring entries by based on a TTL.</description>
   
   <scm>
-    <connection>scm:svn:http://jolira-tools.googlecode.com/svn/expiring-cache/tags/expiring-cache-1.0.14</connection>
-    <developerConnection>scm:svn:https://jolira-tools.googlecode.com/svn/expiring-cache/tags/expiring-cache-1.0.14</developerConnection>
-    <url>http://jolira-tools.googlecode.com/svn/expiring-cache/tags/expiring-cache-1.0.14</url>
+    <connection>scm:svn:http://jolira-tools.googlecode.com/svn/expiring-cache/tags/expiring-cache-1.0.9</connection>
+    <developerConnection>scm:svn:https://jolira-tools.googlecode.com/svn/expiring-cache/tags/expiring-cache-1.0.9</developerConnection>
+    <url>http://jolira-tools.googlecode.com/svn/expiring-cache/tags/expiring-cache-1.0.9</url>
   </scm>
   
   <url>http://jolira-tools.googlecode.com/svn/expiring-cache/trunk</url>
