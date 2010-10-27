@@ -1,12 +1,10 @@
 /**
- * (C) 2009 jolira (http://www.jolira.com). Licensed under the GNU General
- * Public License, Version 3.0 (the "License"); you may not use this file except
- * in compliance with the License. You may obtain a copy of the License at
- * http://www.gnu.org/licenses/gpl-3.0-standalone.html Unless required by
- * applicable law or agreed to in writing, software distributed under the
- * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS
- * OF ANY KIND, either express or implied. See the License for the specific
- * language governing permissions and limitations under the License.
+ * (C) 2009 jolira (http://www.jolira.com). Licensed under the GNU General Public License, Version 3.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy of the License at
+ * http://www.gnu.org/licenses/gpl-3.0-standalone.html Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language governing permissions and limitations
+ * under the License.
  */
 package com.google.code.joliratools.cache;
 
@@ -21,11 +19,9 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
- * A simple thread-safe cache that implements expires entries bases on a time to
- * live.
+ * A simple thread-safe cache that implements expires entries bases on a time to live.
  * 
  * @author Joachim Kainz
- * 
  * @param <K>
  * @param <V>
  * @see Map
@@ -40,23 +36,38 @@ public final class ExpiringCache<K, V> implements Map<K, V>, Serializable {
     private final long ttl;
     private final int maxSize;
 
+    /**
+     * Create a new cache with a 15 minutes timeout and a 16K size.
+     */
     public ExpiringCache() {
         this(FIFTEEN_MINUTES);
     }
 
+    /**
+     * Create a new cache.
+     * 
+     * @param ttl
+     *            the time to live in milliseconds
+     */
     public ExpiringCache(final long ttl) {
         this(ttl, DEFAULT_MAX_SIZE);
     }
 
+    /**
+     * Create a new cache.
+     * 
+     * @param ttl
+     *            the time to live in milliseconds
+     * @param maxSize
+     *            specify the maximum size of the cache
+     */
     public ExpiringCache(final long ttl, final int maxSize) {
         if (ttl <= 0) {
-            throw new IllegalArgumentException(
-                    "time to live must be greater than 0");
+            throw new IllegalArgumentException("time to live must be greater than 0");
         }
 
         if (maxSize < 0) {
-            throw new IllegalArgumentException(
-                    "maximum size must be greater than or equal to 0");
+            throw new IllegalArgumentException("maximum size must be greater than or equal to 0");
         }
 
         this.ttl = ttl;
@@ -64,28 +75,27 @@ public final class ExpiringCache<K, V> implements Map<K, V>, Serializable {
     }
 
     private void cleanup(final long current, final int offset) {
-        final Collection<Entry<K, CacheEntry<V>>> entries = m.entrySet();
-        final Iterator<Entry<K, CacheEntry<V>>> it = entries.iterator();
+        for (;;) {
+            final Collection<Entry<K, CacheEntry<V>>> entries = m.entrySet();
+            final Iterator<Entry<K, CacheEntry<V>>> it = entries.iterator();
 
-        if (!it.hasNext()) {
-            return;
+            if (!it.hasNext()) {
+                return;
+            }
+
+            final Entry<K, CacheEntry<V>> entry = it.next();
+            final CacheEntry<V> wrapper = entry.getValue();
+            final int futureSize = m.size() + offset;
+
+            if ((maxSize <= 0 || futureSize < maxSize) && !wrapper.hasExpired(current)) {
+                return;
+            }
+
+            final K key = entry.getKey();
+            final CacheEntry<V> removed = m.remove(key);
+
+            assert removed == wrapper;
         }
-
-        final Entry<K, CacheEntry<V>> entry = it.next();
-        final CacheEntry<V> wrapper = entry.getValue();
-        final int futureSize = m.size() + offset;
-
-        if ((maxSize <= 0 || futureSize < maxSize)
-                && !wrapper.hasExpired(current)) {
-            return;
-        }
-
-        final K key = entry.getKey();
-        final CacheEntry<V> removed = m.remove(key);
-
-        assert removed == wrapper;
-
-        cleanup(current, offset);
     }
 
     @Override
@@ -199,8 +209,7 @@ public final class ExpiringCache<K, V> implements Map<K, V>, Serializable {
 
             cleanup(current, 1);
 
-            final CacheEntry<V> wrapper = new CacheEntry<V>(value, current
-                    + ttl);
+            final CacheEntry<V> wrapper = new CacheEntry<V>(value, current + ttl);
             final CacheEntry<V> overridden = m.put(key, wrapper);
 
             if (overridden == null) {
@@ -232,16 +241,14 @@ public final class ExpiringCache<K, V> implements Map<K, V>, Serializable {
     }
 
     /**
-     * This put operation only put the value into the map if no other,
-     * non-expired value currently exists in the map. If this key is already in
-     * the map, the existing value is returned instead.
+     * This put operation only put the value into the map if no other, non-expired value currently exists in the map. If
+     * this key is already in the map, the existing value is returned instead.
      * 
      * @param key
      *            the key to be used
      * @param value
      *            the new value
-     * @return the new value, if there was no existing entry for this key;
-     *         otherwise the existing value.
+     * @return the new value, if there was no existing entry for this key; otherwise the existing value.
      */
     public V putIfAbsent(final K key, final V value) {
         final V existing = get(key);
@@ -269,8 +276,7 @@ public final class ExpiringCache<K, V> implements Map<K, V>, Serializable {
                 }
             }
 
-            final CacheEntry<V> wrapper = new CacheEntry<V>(value, current
-                    + ttl);
+            final CacheEntry<V> wrapper = new CacheEntry<V>(value, current + ttl);
             final CacheEntry<V> overridden = m.put(key, wrapper);
 
             assert overridden == _existing;
