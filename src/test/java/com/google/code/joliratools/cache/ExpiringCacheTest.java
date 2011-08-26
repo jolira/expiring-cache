@@ -2,6 +2,7 @@ package com.google.code.joliratools.cache;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
@@ -11,6 +12,7 @@ import java.util.Map;
 
 import org.junit.Test;
 
+@SuppressWarnings("javadoc")
 public class ExpiringCacheTest {
     private static final int SMALL_LATENCY = 250;
     private static final int ONETHOUSAND = 1000;
@@ -94,12 +96,16 @@ public class ExpiringCacheTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testInvalidMaxSizeArgument() {
-        new ExpiringCache<Object, Object>(1, -1);
+        final ExpiringCache<Object, Object> cache = new ExpiringCache<Object, Object>(1, -1);
+
+        assertNotNull(cache);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testInvalidTTLArgument() {
-        new ExpiringCache<Object, Object>(-1);
+        final ExpiringCache<Object, Object> cache = new ExpiringCache<Object, Object>(-1);
+
+        assertNotNull(cache);
     }
 
     @Test

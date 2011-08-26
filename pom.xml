@@ -3,7 +3,7 @@
   <parent>
     <groupId>com.jolira</groupId>
     <artifactId>superpom</artifactId>
-    <version>1.0.7</version>
+    <version>1.1.4</version>
   </parent>
   <artifactId>expiring-cache</artifactId>
   <packaging>jar</packaging>
@@ -13,18 +13,18 @@
   <description>A very simple cache that supports expiring entries by based on a TTL.</description>
   
   <scm>
-    <connection>scm:svn:http://jolira-tools.googlecode.com/svn/expiring-cache/tags/expiring-cache-1.0.9</connection>
-    <developerConnection>scm:svn:https://jolira-tools.googlecode.com/svn/expiring-cache/tags/expiring-cache-1.0.9</developerConnection>
-    <url>http://jolira-tools.googlecode.com/svn/expiring-cache/tags/expiring-cache-1.0.9</url>
+    <connection>scm:git:git@github.com:jolira/expiring-cache.git</connection>
+    <developerConnection>scm:git:git@github.com:jolira/expiring-cache.git</developerConnection>
+    <url>http://github.com/jolira/expiring-cache</url>
   </scm>
   
-  <url>http://jolira-tools.googlecode.com/svn/expiring-cache/trunk</url>
+  <url>http://github.com/jolira/expiring-cache</url>
 
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.8.1</version>
+      <version>4.8.2</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
