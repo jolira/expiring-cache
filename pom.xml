@@ -7,7 +7,7 @@
   </parent>
   <artifactId>expiring-cache</artifactId>
   <packaging>jar</packaging>
-  <version>1.0.16</version>
+  <version>1.0.17-SNAPSHOT</version>
   <name>expiring-cache</name>
   
   <description>A very simple cache that supports expiring entries by based on a TTL.</description>
